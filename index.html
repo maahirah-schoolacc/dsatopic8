@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stacks — 2-Hour Mastery Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F6FB;
+    --card:#FFFFFF;
+    --ink:#1B1E2B;
+    --ink-soft:#5B5F77;
+    --line:#E3E4F0;
+
+    --recur:#5B4FE0;      /* structure / definition step */
+    --recur-bg:#EDEBFC;
+    --base:#0E8F73;       /* operation / mechanism step */
+    --base-bg:#E1F5EF;
+    --return:#C4831A;     /* cost / complexity step */
+    --return-bg:#FBF0DD;
+    --danger:#E5533D;     /* pitfall / common mix-up */
+    --danger-bg:#FCE9E6;
+
+    --code-bg:#1B1E2B;
+    --code-text:#E7E9F5;
+    --code-key:#9D9EFF;
+    --code-str:#7FD9B9;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Inter',sans-serif; font-size:16px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif; margin:0 0 .4em 0; color:var(--ink); font-weight:700;}
+  code, pre, .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:var(--recur);}
+  .wrap{max-width:1180px; margin:0 auto; display:grid; grid-template-columns:270px 1fr; gap:32px; padding:28px 24px 100px;}
+  @media (max-width:880px){ .wrap{grid-template-columns:1fr;} .sidebar{position:static !important; order:2;} }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    grid-column:1/-1;
+    background:linear-gradient(135deg,#1B1E2B 0%, #2A2560 100%);
+    border-radius:22px; padding:40px 44px; color:#fff; position:relative; overflow:hidden;
+    margin-bottom:6px;
+  }
+  .hero::before{
+    content:"push → pop";
+    position:absolute; right:-6px; bottom:-18px; font-family:'JetBrains Mono',monospace;
+    font-size:52px; color:rgba(255,255,255,.06); font-weight:600; white-space:nowrap; pointer-events:none;
+  }
+  .eyebrow{font-family:'JetBrains Mono',monospace; letter-spacing:.14em; font-size:12.5px; color:#B7B2FF; text-transform:uppercase; margin-bottom:10px;}
+  .hero h1{font-size:44px; color:#fff; margin-bottom:8px;}
+  .hero p.sub{color:#C9CBE8; max-width:640px; font-size:15.5px; margin:0;}
+  .hero .badges{display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;}
+  .hero .badge{background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:6px 14px; border-radius:999px; font-size:12.5px; color:#fff;}
+
+  /* ---------- SIDEBAR / ROADMAP ---------- */
+  .sidebar{position:sticky; top:20px; align-self:start;}
+  .stackcard{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 16px; margin-bottom:-9px; box-shadow:0 3px 0 rgba(27,30,43,.05);
+    position:relative; transition:transform .15s ease;
+  }
+  .stackcard:hover{transform:translateY(-2px);}
+  .stackcard:last-child{margin-bottom:0;}
+  .stackcard .time{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft);}
+  .stackcard a{display:flex; align-items:flex-start; gap:9px; text-decoration:none; color:var(--ink); font-weight:600; font-size:13.6px; margin-top:2px;}
+  .stackcard input[type=checkbox]{margin-top:3px; accent-color:var(--base); width:15px; height:15px; flex:none;}
+  .sidebar-title{font-family:'JetBrains Mono',monospace; font-size:11.5px; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft); margin:0 4px 12px;}
+  .sidebar-note{font-size:12px; color:var(--ink-soft); margin:16px 4px 0; line-height:1.5;}
+
+  /* ---------- MAIN CONTENT ---------- */
+  main{min-width:0;}
+  section.lesson{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:32px 36px; margin-bottom:22px; scroll-margin-top:20px;}
+  .lesson-kicker{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+  .lesson-num{
+    font-family:'JetBrains Mono',monospace; background:var(--ink); color:#fff; font-size:12px; font-weight:600;
+    padding:3px 10px; border-radius:7px;
+  }
+  .lesson-time{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-soft);}
+  section.lesson h2{font-size:25px; margin-top:2px;}
+  section.lesson h3{font-size:16.5px; margin-top:26px; margin-bottom:10px;}
+  section.lesson p{color:var(--ink); margin:0 0 12px;}
+  .lede{color:var(--ink-soft); font-size:15px;}
+
+  .box{border-radius:12px; padding:14px 18px; margin:12px 0; border:1px solid transparent;}
+  .box h4{font-size:12.5px; text-transform:uppercase; letter-spacing:.06em; font-family:'JetBrains Mono',monospace; margin:0 0 6px;}
+  .box p{margin:0; font-size:14.5px;}
+  .box.recur{background:var(--recur-bg); border-color:#D8D3FA;} .box.recur h4{color:var(--recur);}
+  .box.base{background:var(--base-bg); border-color:#C7ECDF;} .box.base h4{color:var(--base);}
+  .box.return{background:var(--return-bg); border-color:#F3DFB1;} .box.return h4{color:var(--return);}
+  .box.danger{background:var(--danger-bg); border-color:#F6CFC8;} .box.danger h4{color:var(--danger);}
+
+  .keyline{border-left:3px solid var(--recur); background:#FAFAFF; padding:12px 18px; border-radius:0 10px 10px 0; margin:16px 0; font-style:italic; color:var(--ink-soft); font-size:14.5px;}
+
+  table{width:100%; border-collapse:collapse; margin:12px 0 18px; font-size:14px;}
+  th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{font-family:'JetBrains Mono',monospace; font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); font-weight:600;}
+  tr:last-child td{border-bottom:none;}
+  .tbl-recur th:nth-child(1),.tbl-recur td:nth-child(1){border-left:3px solid var(--recur);}
+  .tbl-iter th:nth-child(2),.tbl-iter td:nth-child(2){border-left:3px solid var(--return);}
+
+  pre.code{
+    background:var(--code-bg); color:var(--code-text); border-radius:12px; padding:16px 20px;
+    font-size:13.6px; line-height:1.6; overflow-x:auto; margin:12px 0;
+  }
+  .code .kw{color:var(--code-key); font-weight:600;}
+  .code .fn{color:#8FD3FF;}
+  .code .cm{color:#7C8096; font-style:italic;}
+
+  /* token row (expressions / arrays of tokens) */
+  .arr{display:flex; gap:6px; flex-wrap:wrap; margin:10px 0; align-items:flex-end;}
+  .arr .cell{display:flex; flex-direction:column; align-items:center; gap:4px;}
+  .arr .idx{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft);}
+  .arr .el{
+    font-family:'JetBrains Mono',monospace; font-weight:600; font-size:14px;
+    border:1.5px solid var(--line); border-radius:8px; padding:6px 11px; background:#FAFAFC; min-width:20px; text-align:center;
+  }
+  .arr .el.pivot{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .arr .el.lo{background:var(--base-bg); border-color:var(--base); color:#0B6650;}
+  .arr .el.hi{background:var(--return-bg); border-color:var(--return); color:#8A5C10;}
+  .arr .el.empty{background:transparent; border-style:dashed; color:var(--ink-soft);}
+
+  /* vertical stack visual */
+  .stackrow{display:flex; gap:32px; align-items:flex-end; margin:14px 0 18px; flex-wrap:wrap;}
+  .stackitem{display:flex; flex-direction:column; align-items:center; gap:8px;}
+  .stackitem .cap{font-size:12.5px; font-weight:600; color:var(--ink-soft); text-align:center; max-width:150px;}
+  .stackcol{display:flex; flex-direction:column-reverse; width:84px; border:1.5px solid var(--line); border-radius:10px; overflow:hidden; min-height:24px;}
+  .stackcol .slot{padding:11px 8px; text-align:center; font-family:'JetBrains Mono',monospace; font-weight:600; font-size:14px; border-top:1px solid var(--line); background:#FAFAFC;}
+  .stackcol .slot:first-child{border-top:none;}
+  .stackcol .slot.top{background:var(--ink); color:#fff;}
+  .stackcol .slot.new{background:var(--base-bg); border-color:var(--base); color:#0B6650;}
+  .stackcol .slot.ghost{background:transparent; border-top:1px dashed var(--line); color:var(--danger); text-decoration:line-through; opacity:.7;}
+  .top-tag{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--recur); font-weight:600;}
+
+  .stack-timeline{display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap; margin:14px 0 8px;}
+  .stack-panel{display:flex; flex-direction:column; align-items:center; gap:6px;}
+  .stack-panel .label{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink-soft); text-align:center; max-width:78px;}
+  .stack-mini{display:flex; flex-direction:column-reverse; width:52px; border:1.5px solid var(--line); border-radius:8px; overflow:hidden; min-height:18px;}
+  .stack-mini .slot{padding:6px 4px; text-align:center; font-family:'JetBrains Mono',monospace; font-weight:600; font-size:12.5px; border-top:1px solid var(--line); background:#FAFAFC;}
+  .stack-mini .slot:first-child{border-top:none;}
+  .stack-mini .slot.top{background:var(--ink); color:#fff;}
+  .stack-arrow{color:var(--ink-soft); font-size:15px; align-self:center; margin-bottom:20px;}
+
+  ul.tight{margin:6px 0 14px; padding-left:20px;}
+  ul.tight li{margin-bottom:5px;}
+  ol.tight{margin:6px 0 14px; padding-left:20px;}
+  ol.tight li{margin-bottom:7px;}
+
+  details.flash{border:1px solid var(--line); border-radius:10px; padding:12px 16px; margin-bottom:8px; background:#FAFAFC;}
+  details.flash summary{cursor:pointer; font-weight:600; font-size:14.5px; list-style:none; display:flex; justify-content:space-between; align-items:center;}
+  details.flash summary::after{content:"reveal ▾"; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--recur); font-weight:500;}
+  details.flash[open] summary::after{content:"hide ▴";}
+  details.flash .answer{margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); font-size:14px; color:var(--ink-soft);}
+
+  .quiz-q{border:1px solid var(--line); border-radius:12px; padding:16px 20px; margin-bottom:12px;}
+  .quiz-q .qnum{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--ink-soft);}
+  .quiz-q p.qtext{font-weight:600; margin:4px 0 8px; font-size:14.8px;}
+  .quiz-q .opts{font-size:13.8px; color:var(--ink-soft); margin:0 0 8px;}
+  .quiz-q details summary{cursor:pointer; color:var(--recur); font-size:13px; font-weight:600; list-style:none;}
+  .quiz-q details summary::after{content:" (show answer)";}
+  .quiz-q details[open] summary::after{content:"";}
+  .quiz-q .ans{margin-top:8px; padding:10px 14px; background:var(--base-bg); border-radius:8px; font-size:13.8px; color:#0B6650;}
+
+  .cram{background:linear-gradient(135deg,#1B1E2B,#2A2560); color:#fff; border-radius:18px; padding:32px 36px; margin-bottom:22px;}
+  .cram h2{color:#fff;}
+  .cram .lede{color:#C9CBE8;}
+  .cram .box{background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14);}
+  .cram .box h4{color:#B7B2FF;}
+  .cram .box p{color:#E7E8F5;}
+  .cram table{color:#E7E8F5;}
+  .cram th{color:#B7B2FF;}
+  .cram td, .cram th{border-bottom:1px solid rgba(255,255,255,.14);}
+
+  footer{grid-column:1/-1; text-align:center; color:var(--ink-soft); font-size:12.5px; padding-top:10px;}
+
+  @media print{
+    body{background:#fff;}
+    .sidebar{display:none;}
+    .wrap{grid-template-columns:1fr; display:block;}
+    section.lesson, .cram{break-inside:avoid; box-shadow:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">IT2X11 · Data Structures &amp; Algorithms · Topic 08</div>
+    <h1>Stacks</h1>
+    <p class="sub">A complete, exam-ready study sheet condensed from the 5-lesson e-lesson on stacks — LIFO behaviour, the Stack ADT in Python, and converting/evaluating infix, prefix, and postfix expressions — built around a 2-hour memorisation session. Colour-coded throughout: <b style="color:#B7B2FF">structure</b>, <b style="color:#6FE3BE">operation</b>, <b style="color:#F2C264">cost</b>.</p>
+    <div class="badges">
+      <span class="badge">⏱ 2-hour plan</span>
+      <span class="badge">4 lessons condensed</span>
+      <span class="badge">14 practice questions w/ answers</span>
+      <span class="badge">Cram sheet included</span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-title">Study roadmap</div>
+
+    <div class="stackcard">
+      <a href="#l1"><input type="checkbox"><span>Introduction to Stacks &amp; LIFO Behaviour <span class="time">(0:00–0:20)</span></span></a>
+    </div>
+    <div class="stackcard">
+      <a href="#l2"><input type="checkbox"><span>Implementing the Stack ADT in Python <span class="time">(0:20–0:50)</span></span></a>
+    </div>
+    <div class="stackcard">
+      <a href="#l3"><input type="checkbox"><span>Prefix, Infix &amp; Postfix Expressions <span class="time">(0:50–1:15)</span></span></a>
+    </div>
+    <div class="stackcard">
+      <a href="#l4"><input type="checkbox"><span>Evaluating Postfix Expressions Using Stacks <span class="time">(1:15–1:40)</span></span></a>
+    </div>
+    <div class="stackcard">
+      <a href="#cram"><input type="checkbox"><span>Cram Sheet <span class="time">(1:40–1:50)</span></span></a>
+    </div>
+    <div class="stackcard">
+      <a href="#quiz"><input type="checkbox"><span>Practice Quiz <span class="time">(1:50–2:00)</span></span></a>
+    </div>
+
+    <p class="sidebar-note">Tick each box off as you go. Every lesson circles back to one idea: a stack only ever lets you touch the <i>top</i> — that one restriction is exactly what makes push, pop, and peek so fast, and exactly why postfix expressions are so easy for a computer to evaluate.</p>
+  </aside>
+
+  <main>
+
+    <!-- ============ LESSON 1 ============ -->
+    <section class="lesson" id="l1">
+      <div class="lesson-kicker"><span class="lesson-num">LESSON 1 / 4</span><span class="lesson-time">~20 min</span></div>
+      <h2>Introduction to Stacks and Their LIFO Behaviour</h2>
+      <p class="lede">Why restricting yourself to only one end of a collection turns out to be a feature, not a limitation.</p>
+
+      <h3>Why stacks matter</h3>
+      <p>In computer science, how we organise and manage data can make all the difference in solving problems efficiently. Data structures are the backbone of every program, helping us store, access, and manipulate information in powerful ways. A stack is one of the simplest of these structures — and one of the most widely used, from undo buttons to browser navigation to how function calls are tracked behind the scenes.</p>
+
+      <div class="box recur">
+        <h4>Structure — what is a stack?</h4>
+        <p>A <b>stack</b> is a linear data structure that organises items in a specific order, allowing you to add and remove elements <b>only from one end</b>, known as the <b>top</b>. This follows the <b>Last-In, First-Out (LIFO)</b> principle: the most recently added item is always the first one removed. Items further down the stack simply cannot be accessed directly — only the top is ever visible.</p>
+      </div>
+
+      <h3>Key stack terminology</h3>
+      <table>
+        <tr><th>Term</th><th>Definition</th></tr>
+        <tr><td><b>Stack</b></td><td>A linear data structure where items are added and removed from one end, called the top, following the LIFO principle.</td></tr>
+        <tr><td><b>LIFO</b></td><td>Last-In, First-Out — the last item added to a stack is the first one to be removed.</td></tr>
+        <tr><td><b>Push</b></td><td>The operation of adding an item to the top of the stack.</td></tr>
+        <tr><td><b>Pop</b></td><td>The operation of removing (and returning) the top item from the stack.</td></tr>
+        <tr><td><b>Peek</b> (or Top)</td><td>The operation that returns the top item of the stack without removing it.</td></tr>
+      </table>
+
+      <div class="box base">
+        <h4>Operation — push, pop, and peek</h4>
+        <p><b>Push:</b> add an item to the top. If the stack is empty and you push 'A', 'A' becomes the top; push 'B' next and 'B' sits on top of 'A'. <b>Pop:</b> remove the top item. If 'B' sits on top of 'A', popping removes 'B', leaving 'A' as the new top. <b>Peek:</b> look at the top item ('B') without removing it — both items remain in the stack afterwards.</p>
+      </div>
+
+      <h3>Push and pop, visualised</h3>
+      <div class="stackrow">
+        <div class="stackitem">
+          <div class="cap">Empty stack</div>
+          <div class="stackcol"></div>
+        </div>
+        <div class="stackitem">
+          <div class="cap">push('A') → A is the top</div>
+          <div class="stackcol">
+            <div class="slot new top">A</div>
+          </div>
+        </div>
+        <div class="stackitem">
+          <div class="cap">push('B') → B is the new top</div>
+          <div class="stackcol">
+            <div class="slot">A</div>
+            <div class="slot new top">B</div>
+          </div>
+        </div>
+        <div class="stackitem">
+          <div class="cap">pop() removes B → A is the top again</div>
+          <div class="stackcol">
+            <div class="slot top">A</div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:13.5px;color:var(--ink-soft)">Only the top slot (dark) is ever directly reachable — everything below it is "locked" until the items above are popped off first.</p>
+
+      <div class="box danger">
+        <h4>Pitfall — items below the top are never directly reachable</h4>
+        <p>A common mix-up: assuming you can grab or inspect an item in the middle of the stack. You can't — push, pop, and peek all operate <b>only at the top</b>. To reach an item underneath, you must pop everything above it first, one at a time, in reverse order of how it was added.</p>
+      </div>
+
+      <div class="keyline">Think of a stack like a stack of plates in your kitchen: you add clean plates to the top, and when you need one, you take the top plate off first. The undo feature in software works the same way — your most recent action sits on top of a stack, so it's the first thing undone. Even your browser's back button uses a stack to remember visited pages, taking you back in the exact reverse order.</div>
+
+      <h3>Stack use cases in the real world</h3>
+      <table class="tbl-recur">
+        <tr><th>Stack use case</th><th>Not a stack use case</th></tr>
+        <tr><td>Undo feature in a text editor</td><td>Queue at a ticket counter</td></tr>
+        <tr><td>Browser back button</td><td>Playlist shuffle mode</td></tr>
+        <tr><td>Function call stack in programming</td><td></td></tr>
+      </table>
+      <p style="font-size:13.5px;color:var(--ink-soft)">The tell: does the <i>most recently added</i> item need to come out <i>first</i>? Undo, back buttons, and function calls all say yes. A ticket queue is first-come-first-served (opposite order), and shuffle mode isn't ordered at all.</p>
+
+      <h3>Quick self-check</h3>
+      <details class="flash"><summary>Which of the following best describes the LIFO principle?</summary>
+        <div class="answer">"The last item added is the first removed." Not first-in-first-out, not random order, and items aren't all removed at once.</div>
+      </details>
+      <details class="flash"><summary>A stack contains A, B, and C, with C on top. What happens when you call pop()?</summary>
+        <div class="answer">C is removed and returned from the top of the stack — B becomes the new top. Pop always acts on the top item, never the bottom.</div>
+      </details>
+      <details class="flash"><summary>You need to check which item is on top of a stack before deciding what to do next, without disturbing the stack. Which operation do you use?</summary>
+        <div class="answer">Peek — it returns the top item without removing it, leaving the stack completely unchanged.</div>
+      </details>
+    </section>
+
+    <!-- ============ LESSON 2 ============ -->
+    <section class="lesson" id="l2">
+      <div class="lesson-kicker"><span class="lesson-num">LESSON 2 / 4</span><span class="lesson-time">~30 min</span></div>
+      <h2>Implementing the Stack ADT in Python</h2>
+      <p class="lede">From an abstract blueprint to a working, testable Python class.</p>
+
+      <h3>From concept to code: Abstract Data Types</h3>
+      <p>An <b>Abstract Data Type (ADT)</b> is like a blueprint for a data structure. It defines a set of values and the operations that can be performed on those values, without specifying how those operations are implemented — much like an architectural blueprint describes what rooms a house should have, but not the exact materials or construction methods. ADTs let programmers focus on <i>what</i> a data structure should do, before worrying about <i>how</i> it does it.</p>
+
+      <div class="box recur">
+        <h4>Structure — key terms</h4>
+        <p><b>ADT:</b> a model that defines a data structure by its behaviour (operations) rather than its implementation. <b>Stack ADT:</b> an ADT where items are added and removed from only one end, following LIFO. <b>Interface:</b> the set of operations an ADT provides (push, pop, peek, …). <b>Implementation:</b> the actual code used to realise those operations in a real language.</p>
+      </div>
+
+      <h3>The Stack ADT interface</h3>
+      <table>
+        <tr><th>Operation</th><th>What it does</th></tr>
+        <tr><td><code>Stack()</code></td><td>Creates a new, empty stack.</td></tr>
+        <tr><td><code>isEmpty()</code></td><td>Returns a boolean indicating whether the stack is empty.</td></tr>
+        <tr><td><code>length()</code></td><td>Returns the number of items currently in the stack.</td></tr>
+        <tr><td><code>push(item)</code></td><td>Adds the given item to the top of the stack.</td></tr>
+        <tr><td><code>pop()</code></td><td>Removes and returns the top item — cannot be called on an empty stack. After a pop, the next item becomes the new top.</td></tr>
+        <tr><td><code>peek()</code></td><td>Returns the top item of a non-empty stack without removing it or modifying the stack's contents.</td></tr>
+      </table>
+
+      <div class="box base">
+        <h4>Operation — building it in Python</h4>
+        <p>We use Python's built-in <code>list</code> to store stack items internally, then wrap it in a class to encapsulate the stack's behaviour. Encapsulation protects the internal data — users interact with the stack only through defined methods like <code>push</code>, <code>pop</code>, and <code>peek</code>, never by touching the list directly.</p>
+      </div>
+
+      <h3>Python implementation</h3>
+      <pre class="code"><span class="cm"># Implementation of the Stack ADT using a Python list.</span>
+<span class="kw">class</span> <span class="fn">Stack</span>:
+    <span class="cm"># Creates an empty stack.</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self._theItems = list()
+
+    <span class="cm"># Returns True if the stack is empty or False otherwise.</span>
+    <span class="kw">def</span> <span class="fn">isEmpty</span>(self):
+        <span class="kw">return</span> len(self) == 0
+
+    <span class="cm"># Returns the number of items in the stack.</span>
+    <span class="kw">def</span> <span class="fn">__len__</span>(self):
+        <span class="kw">return</span> len(self._theItems)
+
+    <span class="cm"># Returns the top item on the stack without removing it.</span>
+    <span class="kw">def</span> <span class="fn">peek</span>(self):
+        assert not self.isEmpty(), <span class="fn">"Cannot peek at an empty stack"</span>
+        <span class="kw">return</span> self._theItems[-1]
+
+    <span class="cm"># Removes and returns the top item on the stack.</span>
+    <span class="kw">def</span> <span class="fn">pop</span>(self):
+        assert not self.isEmpty(), <span class="fn">"Cannot pop from an empty stack"</span>
+        <span class="kw">return</span> self._theItems.pop()
+
+    <span class="cm"># Push an item onto the top of the stack.</span>
+    <span class="kw">def</span> <span class="fn">push</span>(self, item):
+        self._theItems.append(item)</pre>
+
+      <table>
+        <tr><th>Method</th><th>What it does</th></tr>
+        <tr><td><code>push(item)</code></td><td>Appends <code>item</code> to the internal list — it becomes the new top.</td></tr>
+        <tr><td><code>pop()</code></td><td>Asserts the stack isn't empty, then removes and returns <code>self._theItems[-1]</code> via list's own <code>.pop()</code>.</td></tr>
+        <tr><td><code>peek()</code></td><td>Asserts the stack isn't empty, then returns <code>self._theItems[-1]</code> without removing it.</td></tr>
+        <tr><td><code>isEmpty()</code></td><td>Returns <code>True</code> when <code>len(self) == 0</code>.</td></tr>
+        <tr><td><code>__len__()</code></td><td>Returns <code>len(self._theItems)</code> — lets you call <code>len(stack)</code> directly.</td></tr>
+      </table>
+
+      <div class="box return">
+        <h4>Cost — every core operation is O(1)</h4>
+        <p>Because the internal list only ever grows or shrinks from its <b>end</b>, <code>push</code>, <code>pop</code>, and <code>peek</code> are all <b>constant-time</b> operations — no shifting, no scanning. This is exactly why a Python list (appending/popping at the end) is a natural fit for implementing a stack: the "top" of the stack maps directly onto the end of the list.</p>
+      </div>
+
+      <div class="box danger">
+        <h4>Pitfall — popping or peeking an empty stack</h4>
+        <p>If you attempt to <code>pop()</code> or <code>peek()</code> an empty stack, the method should raise an error or assertion — there is no top item to return, so returning something anyway would silently corrupt your program's logic. Always call <code>isEmpty()</code> first to check the stack's state before popping or peeking. Assert statements enforce this precondition and catch the mistake immediately, rather than letting invalid data slip through.</p>
+      </div>
+
+      <h3>Valid and invalid stack operations</h3>
+      <table class="tbl-recur">
+        <tr><th>Valid stack operation</th><th>Invalid stack operation</th></tr>
+        <tr><td>Pushing an item onto the stack</td><td>Popping when the stack is empty</td></tr>
+        <tr><td>Peeking at the top item when the stack is not empty</td><td>Peeking at an empty stack</td></tr>
+        <tr><td>Checking if the stack is empty</td><td></td></tr>
+        <tr><td>Getting the length of the stack</td><td></td></tr>
+      </table>
+
+      <div class="keyline">A well-implemented stack is the building block for countless algorithms and applications — mastering its interface and implementation is key to programming success.</div>
+
+      <h3>Quick self-check</h3>
+      <details class="flash"><summary>Which method would you use to check if a stack is empty in the Python implementation above?</summary>
+        <div class="answer"><code>isEmpty()</code> — returns <code>True</code> if the stack has no items, <code>False</code> otherwise. It's commonly used before calling <code>pop()</code> or <code>peek()</code> to avoid errors.</div>
+      </details>
+      <details class="flash"><summary>Which Python design best implements a stack using object-oriented principles?</summary>
+        <div class="answer">A class that stores items in an internal list and provides methods such as <code>push</code>, <code>pop</code>, and <code>peek</code> — this encapsulates the data and controls access through a defined interface.</div>
+      </details>
+      <details class="flash"><summary>What happens if you call pop() on an empty stack, and why does it matter?</summary>
+        <div class="answer">It raises an assertion error rather than returning invalid data — this prevents the program from crashing unexpectedly or silently using garbage data later on.</div>
+      </details>
+    </section>
+
+    <!-- ============ LESSON 3 ============ -->
+    <section class="lesson" id="l3">
+      <div class="lesson-kicker"><span class="lesson-num">LESSON 3 / 4</span><span class="lesson-time">~25 min</span></div>
+      <h2>Understanding Prefix, Infix, and Postfix Expressions</h2>
+      <p class="lede">The same calculation, written three different ways — and only one of them a computer can evaluate without extra rules.</p>
+
+      <h3>Why notation matters</h3>
+      <p>When you solve math problems, you probably write expressions like <code>2 + 3</code> or <code>(A + B) * (C - D)</code>. But computers process these expressions differently than humans do. Understanding infix, prefix, and postfix notation is essential for programming, parsing, and evaluating expressions efficiently.</p>
+
+      <div class="box recur">
+        <h4>Structure — three notations, one calculation</h4>
+        <p><b>Infix</b> places the operator <i>between</i> its operands — the way we normally write math, e.g. <code>2 + 3</code>. <b>Prefix</b> places the operator <i>before</i> its operands, e.g. <code>+ 2 3</code>. <b>Postfix</b> places the operator <i>after</i> its operands, e.g. <code>2 3 +</code>. An <b>operand</b> is a value (a number or variable); an <b>operator</b> is a symbol such as <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>.</p>
+      </div>
+
+      <h3>Same calculation, side by side</h3>
+      <table>
+        <tr><th>Notation</th><th>Form</th><th>Example — "add A and B, subtract C and D, then multiply"</th></tr>
+        <tr><td>Infix</td><td>operator <i>between</i> operands</td><td><code>(A + B) * (C - D)</code></td></tr>
+        <tr><td>Prefix</td><td>operator <i>before</i> operands</td><td><code>* + A B - C D</code></td></tr>
+        <tr><td>Postfix</td><td>operator <i>after</i> operands</td><td><code>A B + C D - *</code></td></tr>
+      </table>
+      <p style="font-size:13.5px;color:var(--ink-soft)">Each notation rearranges the operators and operands differently, but all three represent exactly the same calculation.</p>
+
+      <h3>Converting infix → postfix / prefix</h3>
+      <ol class="tight">
+        <li><b>Identify the infix expression</b> — e.g. <code>A * B + C / D</code>.</li>
+        <li><b>Add parentheses for clarity</b>, applying operator precedence: <code>((A * B) + (C / D))</code>.</li>
+        <li><b>Move each operator</b> to the end of its group for postfix, or the front for prefix.</li>
+        <li><b>Remove all parentheses</b> to get the final form.</li>
+      </ol>
+      <table class="tbl-recur">
+        <tr><th>To postfix</th><th>To prefix</th></tr>
+        <tr><td>((A B *) (C D /) +)</td><td>(+ (* A B) (/ C D))</td></tr>
+        <tr><td>→ <code>A B * C D / +</code></td><td>→ <code>+ * A B / C D</code></td></tr>
+      </table>
+
+      <div class="box base">
+        <h4>Operation — why prefix and postfix are preferred in computing</h4>
+        <p>Prefix and postfix notations let computers evaluate expressions without worrying about parentheses or operator precedence rules. With postfix in particular, a <b>stack</b> can process the expression efficiently in a single left-to-right pass — which is exactly what Lesson 4 covers.</p>
+      </div>
+
+      <h3>Strengths and weaknesses of each notation</h3>
+      <table>
+        <tr><th>Notation</th><th>Strengths</th><th>Weaknesses</th></tr>
+        <tr><td>Infix</td><td>Familiar and easy for humans to read/write — matches how we naturally express maths.</td><td>Ambiguous for computers; needs parentheses and precedence rules to parse correctly.</td></tr>
+        <tr><td>Prefix</td><td>Removes ambiguity — operator always comes first, no parentheses needed, simplifies parsing.</td><td>Less intuitive for people, since it doesn't match how we usually write maths.</td></tr>
+        <tr><td>Postfix</td><td>Ideal for stack-based evaluation — no parentheses or precedence rules needed; used by compilers and calculators.</td><td>Less familiar to humans; harder to interpret at a glance.</td></tr>
+      </table>
+
+      <div class="box return">
+        <h4>Cost — the trade-off in one line</h4>
+        <p>Infix wins on human readability. Prefix and postfix win on computational simplicity, because the structure of the expression alone (not extra rules) determines the order of evaluation — which is precisely the ambiguity infix has to resolve with parentheses and precedence.</p>
+      </div>
+
+      <div class="box danger">
+        <h4>Pitfall — don't just reverse the operators</h4>
+        <p>It's tempting to think postfix is "infix with the operator moved to the end," full stop. But operand <i>order</i> also matters, especially for non-commutative operators like <code>-</code> and <code>/</code>. <code>A B + C D - *</code> means <code>(A + B) * (C - D)</code> — the grouping is preserved, just rearranged; it does not mean <code>(B + A) * (D - C)</code>.</p>
+      </div>
+
+      <h3>Sort expressions by notation</h3>
+      <table class="tbl-recur">
+        <tr><th>Infix</th><th>Prefix</th><th>Postfix</th></tr>
+        <tr><td><code>2 + 3</code></td><td><code>+ 2 3</code></td><td><code>2 3 +</code></td></tr>
+        <tr><td><code>(A + B) * (C - D)</code></td><td><code>* + A B - C D</code></td><td><code>A B + C D - *</code></td></tr>
+      </table>
+
+      <h3>Quick self-check</h3>
+      <details class="flash"><summary>Which of the following is the correct postfix form of the infix expression A * (B + C) / D?</summary>
+        <div class="answer"><code>A B C + * D /</code> — B and C combine first (matching the parentheses), then the result multiplies with A, then the whole thing divides by D.</div>
+      </details>
+      <details class="flash"><summary>Why don't prefix and postfix expressions need parentheses?</summary>
+        <div class="answer">Because the position of each operator relative to its operands fully determines the structure and order of evaluation — there's no ambiguity left for parentheses to resolve.</div>
+      </details>
+    </section>
+
+    <!-- ============ LESSON 4 ============ -->
+    <section class="lesson" id="l4">
+      <div class="lesson-kicker"><span class="lesson-num">LESSON 4 / 4</span><span class="lesson-time">~25 min</span></div>
+      <h2>Evaluating Postfix Expressions Using Stacks</h2>
+      <p class="lede">How a calculator turns a row of tokens into a single number, in one left-to-right pass.</p>
+
+      <h3>Key terms in postfix evaluation</h3>
+      <table>
+        <tr><th>Term</th><th>Definition</th></tr>
+        <tr><td><b>Operand</b></td><td>A value or variable used in a mathematical operation.</td></tr>
+        <tr><td><b>Operator</b></td><td>A symbol such as <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code> that tells the computer what operation to perform.</td></tr>
+        <tr><td><b>Stack</b></td><td>The data structure that stores operands during evaluation, following LIFO.</td></tr>
+        <tr><td><b>Token</b></td><td>Each individual part of the expression — either an operand or an operator.</td></tr>
+        <tr><td><b>Result</b></td><td>The final value left on the stack after the entire expression is evaluated.</td></tr>
+      </table>
+
+      <div class="box recur">
+        <h4>Structure — the postfix evaluation algorithm</h4>
+        <p>Scan the expression from left to right, one token at a time. Operands get pushed. Operators trigger a pop-compute-push cycle. By the time you reach the end, the stack holds exactly one value: the answer. No parentheses, no precedence table required — the stack does all the bookkeeping.</p>
+      </div>
+
+      <ol class="tight">
+        <li><b>Start scanning</b> — begin at the leftmost token, move right one token at a time.</li>
+        <li><b>Push operands</b> — if the token is an operand, push its value onto the stack.</li>
+        <li><b>Pop for operators</b> — if the token is an operator, pop the top two values off the stack.</li>
+        <li><b>Apply the operation</b> — the <i>first</i> value popped is the <b>right</b> operand; the <i>second</i> value popped is the <b>left</b> operand.</li>
+        <li><b>Push the result back</b> onto the stack, ready for later operators.</li>
+        <li><b>Final result</b> — once every token is processed, the one value left on the stack is the answer.</li>
+      </ol>
+
+      <div class="box danger">
+        <h4>Pitfall — operand order is not symmetric</h4>
+        <p>For a token stream <code>... x y op</code>, <code>y</code> is popped first (the right operand) and <code>x</code> is popped second (the left operand), and the operation applied is <code>x op y</code> — <b>not</b> <code>y op x</code>. This doesn't matter for <code>+</code> or <code>*</code>, but it absolutely matters for <code>-</code> and <code>/</code>: mixing up the order silently gives you the wrong answer, with no error raised.</p>
+      </div>
+
+      <h3>Worked example — a valid expression</h3>
+      <p>Evaluate <code>A B C + * D /</code> where A = 8, B = 2, C = 3, D = 4:</p>
+      <table>
+        <tr><th>Step</th><th>Token</th><th>Action</th><th>Stack after</th></tr>
+        <tr><td>1</td><td>A</td><td>Push value of A</td><td>8</td></tr>
+        <tr><td>2</td><td>B</td><td>Push value of B</td><td>8, 2</td></tr>
+        <tr><td>3</td><td>C</td><td>Push value of C</td><td>8, 2, 3</td></tr>
+        <tr><td>4</td><td>+</td><td>Pop y=3, x=2 → compute x+y=5 → push</td><td>8, 5</td></tr>
+        <tr><td>5</td><td>*</td><td>Pop y=5, x=8 → compute x*y=40 → push</td><td>40</td></tr>
+        <tr><td>6</td><td>D</td><td>Push value of D</td><td>40, 4</td></tr>
+        <tr><td>7</td><td>/</td><td>Pop y=4, x=40 → compute x/y=10 → push</td><td>10</td></tr>
+      </table>
+      <p style="font-size:13.5px;color:var(--ink-soft)"><b>Final result = 10</b> — exactly one value remains on the stack.</p>
+
+      <div class="stack-timeline">
+        <div class="stack-panel"><div class="label">after A,B,C</div><div class="stack-mini"><div class="slot">8</div><div class="slot">2</div><div class="slot top">3</div></div></div>
+        <div class="stack-arrow">→</div>
+        <div class="stack-panel"><div class="label">after +</div><div class="stack-mini"><div class="slot">8</div><div class="slot top">5</div></div></div>
+        <div class="stack-arrow">→</div>
+        <div class="stack-panel"><div class="label">after *</div><div class="stack-mini"><div class="slot top">40</div></div></div>
+        <div class="stack-arrow">→</div>
+        <div class="stack-panel"><div class="label">after D</div><div class="stack-mini"><div class="slot">40</div><div class="slot top">4</div></div></div>
+        <div class="stack-arrow">→</div>
+        <div class="stack-panel"><div class="label">after /</div><div class="stack-mini"><div class="slot top">10</div></div></div>
+      </div>
+
+      <h3>Worked example — an invalid expression</h3>
+      <p>Evaluate <code>A B * C D +</code> where A = 8, B = 2, C = 3, D = 4:</p>
+      <table>
+        <tr><th>Step</th><th>Token</th><th>Action</th><th>Stack after</th></tr>
+        <tr><td>1</td><td>A</td><td>Push value of A</td><td>8</td></tr>
+        <tr><td>2</td><td>B</td><td>Push value of B</td><td>8, 2</td></tr>
+        <tr><td>3</td><td>*</td><td>Pop y=2, x=8 → compute x*y=16 → push</td><td>16</td></tr>
+        <tr><td>4</td><td>C</td><td>Push value of C</td><td>16, 3</td></tr>
+        <tr><td>5</td><td>D</td><td>Push value of D</td><td>16, 3, 4</td></tr>
+        <tr><td>6</td><td>+</td><td>Pop y=4, x=3 → compute x+y=7 → push</td><td>16, 7</td></tr>
+      </table>
+      <div class="box danger">
+        <h4>Error — too many values left on the stack</h4>
+        <p>A valid postfix expression must leave <b>exactly one</b> final value on the stack. This example finishes with <b>16 and 7</b> both still sitting there — meaning not every operand was consumed by an operator. That's the signature of an invalid (malformed) postfix expression.</p>
+      </div>
+
+      <h3>Postfix evaluation: common questions</h3>
+      <details class="flash"><summary>What if there aren't enough operands on the stack when an operator appears?</summary>
+        <div class="answer">The expression is invalid — this usually signals a mistake in the expression or a missing operand.</div>
+      </details>
+      <details class="flash"><summary>How are multi-digit numbers or variable names handled?</summary>
+        <div class="answer">They're treated as single tokens. As long as tokens are clearly separated (e.g. by spaces), there's no confusion between a number like 12 and two separate operands 1 and 2.</div>
+      </details>
+      <details class="flash"><summary>How does operator precedence affect postfix evaluation?</summary>
+        <div class="answer">It doesn't need to — precedence is already baked into the order of the tokens. The stack just processes them left to right; there are no precedence rules to apply during evaluation itself. This is one of postfix's main advantages over infix.</div>
+      </details>
+
+      <div class="box return">
+        <h4>Cost — one pass, O(n)</h4>
+        <p>Each token is read exactly once, and each operator triggers exactly one pop-pop-push cycle (all O(1) stack operations). Evaluating a postfix expression with n tokens is therefore <b>O(n)</b> overall — a single linear scan, with no backtracking and no re-parsing needed.</p>
+      </div>
+
+      <h3>Quick self-check</h3>
+      <details class="flash"><summary>What will be the result of evaluating the postfix expression: 5 2 3 * + 4 - ?</summary>
+        <div class="answer"><b>7</b>. Push 5, 2, 3. <code>*</code>: pop 3,2 → 2*3=6 → stack [5,6]. <code>+</code>: pop 6,5 → 5+6=11 → stack [11]. Push 4 → [11,4]. <code>-</code>: pop 4,11 → 11-4=7 → stack [7].</div>
+      </details>
+    </section>
+
+    <!-- ============ CRAM SHEET ============ -->
+    <section class="cram" id="cram">
+      <div class="lesson-kicker"><span class="lesson-num" style="background:#fff;color:#1B1E2B">CRAM SHEET</span><span class="lesson-time" style="color:#C9CBE8">~10 min — last pass before practice</span></div>
+      <h2>One-Page Recap</h2>
+      <p class="lede">If you only remember these, remember these.</p>
+
+      <div class="box recur">
+        <h4>1. What a stack is</h4>
+        <p>A linear structure where items are added and removed <b>only from the top</b>, following <b>LIFO</b> (Last-In, First-Out). Items below the top are never directly reachable.</p>
+      </div>
+      <div class="box base">
+        <h4>2. The three core operations</h4>
+        <p><b>Push</b> — add to the top. <b>Pop</b> — remove and return the top item. <b>Peek</b> — return the top item without removing it. All three (plus <code>isEmpty</code> and <code>length</code>) make up the <b>Stack ADT</b> interface.</p>
+      </div>
+      <div class="box return">
+        <h4>3. Python implementation &amp; cost</h4>
+        <p>Wrap a Python list in a class (<code>self._theItems</code>); <code>push</code> = <code>append</code>, <code>pop</code> = list's own <code>.pop()</code>, <code>peek</code> = <code>[-1]</code>. Because everything happens at the end of the list, every core operation is <b>O(1)</b>.</p>
+      </div>
+      <div class="box danger">
+        <h4>4. The classic error</h4>
+        <p>Calling <code>pop()</code> or <code>peek()</code> on an <b>empty stack</b> should raise an assertion/error — always check <code>isEmpty()</code> first.</p>
+      </div>
+      <div class="box recur">
+        <h4>5. Infix vs. prefix vs. postfix</h4>
+        <p><b>Infix</b> (operator between operands) — natural for humans, needs parentheses/precedence. <b>Prefix</b> (operator before) and <b>postfix</b> (operator after) — remove ambiguity, no parentheses needed; postfix is what stacks evaluate directly.</p>
+      </div>
+      <div class="box base">
+        <h4>6. Evaluating postfix with a stack</h4>
+        <p>Scan left to right. Operand → push. Operator → pop <b>y</b> first (right operand), then <b>x</b> (left operand), compute <code>x op y</code>, push the result. One value left at the end = the answer; anything else = an invalid expression.</p>
+      </div>
+
+      <table>
+        <tr><th>Concept</th><th>One-line definition</th></tr>
+        <tr><td>Stack</td><td>A linear data structure restricted to add/remove at one end (the top), following LIFO.</td></tr>
+        <tr><td>LIFO</td><td>Last-In, First-Out — the most recently added item is removed first.</td></tr>
+        <tr><td>Push / Pop / Peek</td><td>Add to top / remove &amp; return top / return top without removing it.</td></tr>
+        <tr><td>ADT</td><td>A model defining a data structure by its behaviour, not its implementation.</td></tr>
+        <tr><td>Interface</td><td>The set of operations an ADT provides (e.g. push, pop, peek for a stack).</td></tr>
+        <tr><td>Infix / Prefix / Postfix</td><td>Operator between / before / after its operands.</td></tr>
+        <tr><td>Token</td><td>A single unit of an expression — an operand or an operator.</td></tr>
+        <tr><td>Postfix evaluation</td><td>Scan left to right; push operands; on an operator, pop two, compute, push the result.</td></tr>
+      </table>
+    </section>
+
+    <!-- ============ QUIZ ============ -->
+    <section class="lesson" id="quiz">
+      <div class="lesson-kicker"><span class="lesson-num">PRACTICE</span><span class="lesson-time">~10 min — self-test</span></div>
+      <h2>Full Practice Quiz (14 questions)</h2>
+      <p class="lede">Cover the answer, say it out loud, then click to check. Questions are drawn from the e-lesson's knowledge checks scattered through the lessons, plus the final 10-question wrap-up quiz.</p>
+
+      <div class="quiz-q"><span class="qnum">Q1</span><p class="qtext">Which of the following best describes the LIFO principle?</p>
+        <details><summary></summary><div class="ans">The last item added is the first removed.</div></details></div>
+
+      <div class="quiz-q"><span class="qnum">Q2</span><p class="qtext">Which method would you use to check if a stack is empty in a Python stack implementation?</p>
+        <details><summary></summary><div class="ans"><code>isEmpty()</code>.</div></details></div>
+
+      <div class="quiz-q"><span class="qnum">Q3</span><p class="qtext">Which of the following is the correct postfix form of the infix expression A * (B + C) / D?</p>
+        <details><summary></summary><div class="ans"><code>A B C + * D /</code>.</div></details></div>
+
+      <div class="quiz-q"><span class="qnum">Q4</span><p class="qtext">What will be the result of evaluating the postfix expression: 5 2 3 * + 4 - ?</p>
+        <details><summary></summary><div class="ans">7.</div></details></div>
+
+      <div class="quiz-q"><span class="qnum">Q5</span><p class="qtext">A stack is a linear data structure in which items are added and removed only from the top. True or false?</p>
+        <details><summary></summary><div class="ans">True.</div></details></div>
+
+      <div class="quiz-q"><span class="qnum">Q6</span><p class="qtext">What is the principle that describes the behaviour of a stack?</p>
+        <details><summary></summary><div class="ans">LIFO (Last-In, First-Out).</div></details></div>
+
+      <div class="quiz-q"><span class="qnum">Q7</span><p class="qtext">Match each stack operation to its outcome: Pop, Push, Peek.</p>
+        <details><summary></summary><div class="ans">Pop → removes the item currently at the top. Push → places a new item on the top. Peek → returns the top item without removing it.</div></details></div>
+
+      <div class="quiz-q"><span class="qnum">Q8</span><p class="qtext">A stack currently contains the items A, B, and C, with C at the top. If you perform a pop operation, what happens?</p>
+        <details><summary></summary><div class="ans">C is removed and returned from the top of the stack.</div></details></div>
+
+      <div class="quiz-q"><span class="qnum">Q9</span><p class="qtext">A programmer wants to check which item is currently on top of a stack before deciding what to do next. Which stack operation should they use?</p>
+        <details><summary></summary><div class="ans">Peek.</div></details></div>
+
+      <div class="quiz-q"><span class="qnum">Q10</span><p class="qtext">A developer implements a Stack class in Python using a list named `self._theItems`. Which option best explains how the core operations preserve LIFO behaviour?</p>
+        <details><summary></summary><div class="ans">`push` adds to the top, `pop` removes the most recent item, `peek` views the top without removing it, and `isEmpty`/`__len__` report the stack's state.</div></details></div>
+
+      <div class="quiz-q"><span class="qnum">Q11</span><p class="qtext">Which Python design best implements a stack using object-oriented principles?</p>
+        <details><summary></summary><div class="ans">A class that stores items in an internal list and provides methods such as push, pop, and peek.</div></details></div>
+
+      <div class="quiz-q"><span class="qnum">Q12</span><p class="qtext">Match each expression notation to its example: Postfix notation, Prefix notation, Infix notation.</p>
+        <details><summary></summary><div class="ans">Postfix → A B +. Prefix → + A B. Infix → A + B.</div></details></div>
+
+      <div class="quiz-q"><span class="qnum">Q13</span><p class="qtext">When evaluating a postfix expression with a stack, what is the main role of the stack during the process?</p>
+        <details><summary></summary><div class="ans">It stores operands and intermediate results as the expression is processed.</div></details></div>
+
+      <div class="quiz-q"><span class="qnum">Q14</span><p class="qtext">When evaluating the postfix expression `5 2 3 * + 4 -` using a stack, what is the final result?</p>
+        <details><summary></summary><div class="ans">7.</div></details></div>
+
+    </section>
+
+  </main>
+
+  <footer>Condensed study aid derived from <i>IT2X11 — E-Lesson — Topic 08 — Stacks</i>. For revision use — always check back against the original e-lesson for anything graded.</footer>
+
+</div>
+</body>
+</html>
